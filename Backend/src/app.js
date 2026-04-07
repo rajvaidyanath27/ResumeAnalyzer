@@ -3,14 +3,14 @@ const cookieParser = require("cookie-parser")
 const cors = require("cors")
 
 const app = express()
+const FRONTEND_URL = process.env.FRONTEND_URL || "https://resume-analyzer-pi-gold.vercel.app"
 
 app.use(express.json())
 app.use(cookieParser())
 
 app.use(cors({
     origin:[
-        "http://localhost:5173",
-        "https://resume-analyzer-pi-gold.vercel.app"
+        FRONTEND_URL
     ],
     credentials:true
 }))
