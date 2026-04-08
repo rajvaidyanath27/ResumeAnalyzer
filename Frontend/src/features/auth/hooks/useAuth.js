@@ -60,6 +60,8 @@ export const useAuth = () => {
                 setUser(data.user)
             } catch (err) { 
                 console.error("Get user error:", err?.response?.data?.message || err.message)
+                // Clear invalid token from localStorage
+                localStorage.removeItem("token")
                 setUser(null)
             } finally {
                 setLoading(false)
@@ -68,7 +70,7 @@ export const useAuth = () => {
 
         getAndSetUser()
 
-    }, [])
+    }, [setUser, setLoading])
 
     return { user, loading, handleRegister, handleLogin, handleLogout }
 }
