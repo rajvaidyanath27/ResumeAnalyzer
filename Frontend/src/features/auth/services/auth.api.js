@@ -7,6 +7,24 @@ const api = axios.create({
     withCredentials: true
 })
 
+// Add token to request headers if it exists
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token")
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+})
+
+// Handle errors properly
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        console.error("API Error:", error.response?.data || error.message)
+        return Promise.reject(error)
+    }
+)
+
 export async function register({ username, email, password }) {
 
     try {
@@ -14,12 +32,15 @@ export async function register({ username, email, password }) {
             username, email, password
         })
 
+        // Store token if returned
+        if (response.data.token) {
+            localStorage.setItem("token", response.data.token)
+        }
+
         return response.data
 
     } catch (err) {
-
-        console.log(err)
-
+        throw err
     }
 
 }
@@ -32,10 +53,15 @@ export async function login({ email, password }) {
             email, password
         })
 
+        // Store token if returned
+        if (response.data.token) {
+            localStorage.setItem("token", response.data.token)
+        }
+
         return response.data
 
     } catch (err) {
-        console.log(err)
+        throw err
     }
 
 }
@@ -45,10 +71,13 @@ export async function logout() {
 
         const response = await api.get("/api/auth/logout")
 
+        // Clear token on logout
+        localStorage.removeItem("token")
+
         return response.data
 
     } catch (err) {
-
+        throw err
     }
 }
 
@@ -61,7 +90,7 @@ export async function getMe() {
         return response.data
 
     } catch (err) {
-        console.log(err)
+        throw err
     }
 
 }
