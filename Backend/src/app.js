@@ -12,6 +12,7 @@ app.use(cors({
     origin: [
         "https://resume-analyzer-pi-gold.vercel.app",
         "http://localhost:5173",
+        "https://resume-analyzer-git-main-raj-baidyanaths-projects-4c684a5e.vercel.app/",
         "http://localhost:3000",
         "http://127.0.0.1:5173"
     ],
