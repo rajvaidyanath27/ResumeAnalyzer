@@ -7,25 +7,14 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 
-// CORS Configuration - Allow frontend origins
-const allowedOrigins = [
-    "https://resume-analyzer-pi-gold.vercel.app",
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173"
-]
-
+// CORS Configuration
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or Postman)
-        if (!origin) return callback(null, true)
-        
-        if (allowedOrigins.includes(origin)) {
-            callback(null, true)
-        } else {
-            callback(new Error("CORS not allowed"))
-        }
-    },
+    origin: [
+        "https://resume-analyzer-pi-gold.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173"
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
