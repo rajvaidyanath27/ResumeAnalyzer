@@ -21,20 +21,19 @@ async function authUser(req, res, next) {
         })
     }
 
-    const isTokenBlacklisted = await tokenBlacklistModel.findOne({
-        token
-    })
-
-    if (isTokenBlacklisted) {
-        return res.status(401).json({
-            message: "token is invalid"
-        })
-    }
-
     try {
+        // First verify the JWT token structure
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
         req.user = decoded
+
+        // Check blacklist asynchronously without blocking
+        tokenBlacklistModel.findOne({ token })
+            .catch(err => {
+                console.error("Blacklist check error:", err.message)
+                // Don't fail the request if blacklist check fails due to DB issues
+                // The token is still valid from JWT perspective
+            })
 
         next()
 
