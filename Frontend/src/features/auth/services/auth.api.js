@@ -31,10 +31,11 @@ api.interceptors.response.use(
             error.response?.data ||
             error.message
 
-        // ✅ FIX: avoid redirect loop
+        // ✅ FIX: avoid redirect loop (exclude /login and /register)
         if (
             error.response?.status === 401 &&
-            window.location.pathname !== "/login"
+            window.location.pathname !== "/login" &&
+            window.location.pathname !== "/register"
         ) {
             localStorage.removeItem("token")
             window.location.href = "/login"
@@ -84,6 +85,10 @@ export async function logout() {
 
 // ✅ FIXED (IMPORTANT)
 export async function getMe() {
+    const token = localStorage.getItem("token")
+    if (!token) {
+        throw { message: "No token found", status: 401 }
+    }
     const res = await api.get("/api/auth/get-me")
     return res.data
 }

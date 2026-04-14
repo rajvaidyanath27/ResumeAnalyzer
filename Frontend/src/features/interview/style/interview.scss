@@ -63,6 +63,30 @@ $severity-low: #3fb950;
 
 
 
+    &__back {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        background: none;
+        border: 1px solid $border-color;
+        border-radius: 0.5rem;
+        color: $text-muted;
+        font-family: $font-stack;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: left;
+        transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+        margin-bottom: 1rem;
+
+        &:hover {
+            background-color: $bg-panel;
+            color: $text-primary;
+            border-color: $accent;
+        }
+    }
 
     &__label {
         font-size: 0.7rem;
@@ -109,6 +133,44 @@ $severity-low: #3fb950;
         display: flex;
         align-items: center;
         flex-shrink: 0;
+    }
+}
+
+// ── Resume Download Card ──────────────────────────────────────────────────────
+.resume-download-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba($accent, 0.08) 0%, rgba(#6c5ce7, 0.06) 100%);
+    border: 1px solid rgba($accent, 0.2);
+    border-radius: 0.75rem;
+
+    &__info {
+        h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: $accent;
+            margin-bottom: 0.3rem;
+        }
+
+        p {
+            font-size: 0.72rem;
+            color: $text-muted;
+            line-height: 1.4;
+        }
+    }
+
+    .primary-button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 0.8rem;
     }
 }
 
@@ -174,7 +236,7 @@ $severity-low: #3fb950;
     transition: border-color 0.2s;
 
     &:hover {
-        border-color: lighten($border-color, 8%);
+        border-color: color.adjust($border-color, $lightness: 8%);
     }
 
     &__header {
@@ -236,7 +298,7 @@ $severity-low: #3fb950;
         p {
             margin: 0;
             font-size: 0.835rem;
-            color: lighten($text-muted, 15%);
+            color: color.adjust($text-muted, $lightness: 15%);
             line-height: 1.6;
         }
     }
@@ -340,7 +402,7 @@ $severity-low: #3fb950;
             align-items: flex-start;
             gap: 0.5rem;
             font-size: 0.845rem;
-            color: lighten($text-muted, 12%);
+            color: color.adjust($text-muted, $lightness: 12%);
             line-height: 1.5;
         }
     }
