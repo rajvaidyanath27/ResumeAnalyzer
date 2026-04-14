@@ -64,12 +64,11 @@ export const getAllInterviewReports = async () => {
 
 
 /**
- * @description Service to generate resume pdf based on user self description, resume content and job description.
+ * @description Service to generate ATS-optimized resume HTML based on interview report data.
  */
 export const generateResumePdf = async ({ interviewReportId }) => {
     const response = await api.post(`/api/interview/resume/pdf/${interviewReportId}`, null, {
-        responseType: "blob",
-        timeout: 120000  // 2 minutes — AI generation + Puppeteer PDF takes time
+        timeout: 120000  // 2 minutes — AI generation takes time
     })
 
     return response.data

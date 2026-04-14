@@ -86,24 +86,22 @@ async function generateResumePdfController(req, res) {
 
         const { resume, jobDescription, selfDescription } = interviewReport
 
-        const pdfBuffer = await generateResumePdf({ resume, jobDescription, selfDescription })
+        const resumeHtml = await generateResumePdf({ resume, jobDescription, selfDescription })
 
-        if (!pdfBuffer || pdfBuffer.length === 0) {
+        if (!resumeHtml) {
             return res.status(500).json({
-                message: "Failed to generate PDF. Please try again."
+                message: "Failed to generate resume. Please try again."
             })
         }
 
-        res.set({
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename=resume_${interviewReportId}.pdf`
+        res.status(200).json({
+            message: "Resume generated successfully.",
+            html: resumeHtml
         })
-
-        res.send(pdfBuffer)
     } catch (error) {
-        console.error("Resume PDF generation error:", error.message)
+        console.error("Resume generation error:", error.message)
         res.status(500).json({
-            message: "Failed to generate resume PDF: " + (error.message || "Unknown error")
+            message: "Failed to generate resume: " + (error.message || "Unknown error")
         })
     }
 }
