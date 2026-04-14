@@ -173,9 +173,7 @@ Generate the HTML now. It MUST be complete and ready to render as a PDF.`
 
     const jsonContent = JSON.parse(response.text)
 
-    const pdfBuffer = await generatePdfFromHtml(jsonContent.html)
-
-    return pdfBuffer
+    return jsonContent.html
 
 }
 
