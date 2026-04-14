@@ -1,5 +1,5 @@
 import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf } from "../services/interview.api"
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { InterviewContext } from "../interview.context"
 import { useParams } from "react-router"
 
@@ -27,7 +27,7 @@ export const useInterview = () => {
             setLoading(false)
         }
 
-        return response.interviewReport
+        return response?.interviewReport
     }
 
     const getReportById = async (interviewId) => {
@@ -41,7 +41,7 @@ export const useInterview = () => {
         } finally {
             setLoading(false)
         }
-        return response.interviewReport
+        return response?.interviewReport
     }
 
     const getReports = async () => {
@@ -56,29 +56,52 @@ export const useInterview = () => {
             setLoading(false)
         }
 
-        return response.interviewReports
+        return response?.interviewReports
     }
 
+    const [downloadingPdf, setDownloadingPdf] = useState(false)
+
     const getResumePdf = async (interviewReportId) => {
-        setLoading(true)
-        let response = null
+        setDownloadingPdf(true)
         try {
-            response = await generateResumePdf({ interviewReportId })
-            const url = window.URL.createObjectURL(new Blob([ response ], { type: "application/pdf" }))
-            const link = document.createElement("a")
-            link.href = url
-            link.setAttribute("download", `resume_${interviewReportId}.pdf`)
-            document.body.appendChild(link)
-            link.click()
+            const response = await generateResumePdf({ interviewReportId })
+
+            // Validate that we got an actual PDF blob, not an error JSON
+            if (response && response.size > 0) {
+                // Check if it's actually a PDF and not an error response
+                if (response.type && response.type.includes('json')) {
+                    const text = await response.text()
+                    const errorData = JSON.parse(text)
+                    alert(errorData.message || "Failed to generate resume PDF")
+                    return
+                }
+
+                // Force the correct MIME type so browser treats it as PDF
+                const pdfBlob = new Blob([response], { type: "application/pdf" })
+                const url = window.URL.createObjectURL(pdfBlob)
+                const link = document.createElement("a")
+                link.href = url
+                link.download = `resume_${interviewReportId}.pdf`
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+                window.URL.revokeObjectURL(url)
+            } else {
+                alert("Failed to generate resume. Please try again.")
+            }
         }
         catch (error) {
-            console.log(error)
+            console.error("Resume PDF error:", error)
+            alert(error?.message || "Failed to generate resume PDF. Please try again.")
         } finally {
-            setLoading(false)
+            setDownloadingPdf(false)
         }
     }
 
     useEffect(() => {
+        const token = localStorage.getItem("token")
+        if (!token) return; // ✅ Don't fetch if not logged in
+
         if (interviewId) {
             getReportById(interviewId)
         } else {
@@ -86,6 +109,6 @@ export const useInterview = () => {
         }
     }, [ interviewId ])
 
-    return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf }
+    return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf, downloadingPdf }
 
 }

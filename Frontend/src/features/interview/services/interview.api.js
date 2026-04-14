@@ -7,6 +7,19 @@ const api = axios.create({
     withCredentials: true,
 })
 
+// Attach auth token to every request
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token")
+        if (token) {
+            config.headers = config.headers || {}
+            config.headers.Authorization = `Bearer ${token}`
+        }
+        return config
+    },
+    (error) => Promise.reject(error)
+)
+
 
 /**
  * @description Service to generate interview report based on user self description, resume and job description.
@@ -54,7 +67,8 @@ export const getAllInterviewReports = async () => {
  */
 export const generateResumePdf = async ({ interviewReportId }) => {
     const response = await api.post(`/api/interview/resume/pdf/${interviewReportId}`, null, {
-        responseType: "blob"
+        responseType: "blob",
+        timeout: 120000  // 2 minutes — AI generation + Puppeteer PDF takes time
     })
 
     return response.data
