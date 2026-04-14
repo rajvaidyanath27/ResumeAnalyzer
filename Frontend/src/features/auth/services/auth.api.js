@@ -4,93 +4,86 @@ const API = import.meta.env.VITE_API_URL
 
 const api = axios.create({
     baseURL: API,
-    withCredentials: true
+    timeout: 10000,
 })
 
-// Add token to request headers if it exists
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token")
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-})
+// REQUEST INTERCEPTOR
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token")
 
-// Handle errors properly
+        if (token) {
+            config.headers = config.headers || {}
+            config.headers.Authorization = `Bearer ${token}`
+        }
+
+        return config
+    },
+    (error) => Promise.reject(error)
+)
+
+// RESPONSE INTERCEPTOR (FIXED)
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        console.error("API Error:", error.response?.data || error.message)
-        return Promise.reject(error)
+        const message =
+            error.response?.data?.message ||
+            error.response?.data ||
+            error.message
+
+        // ✅ FIX: avoid redirect loop
+        if (
+            error.response?.status === 401 &&
+            window.location.pathname !== "/login"
+        ) {
+            localStorage.removeItem("token")
+            window.location.href = "/login"
+        }
+
+        // ✅ FIX: don't return string
+        return Promise.reject({
+            message,
+            status: error.response?.status,
+        })
     }
 )
 
-export async function register({ username, email, password }) {
 
-    try {
-        const response = await api.post('/api/auth/register', {
-            username, email, password
-        })
+// ================= AUTH FUNCTIONS =================
 
-        // Store token if returned
-        if (response.data.token) {
-            localStorage.setItem("token", response.data.token)
-        }
+// REGISTER
+export async function register(data) {
+    const res = await api.post("/api/auth/register", data)
 
-        return response.data
-
-    } catch (err) {
-        throw err
+    if (res.data?.token) {
+        localStorage.setItem("token", res.data.token)
     }
 
+    return res.data
 }
 
-export async function login({ email, password }) {
 
-    try {
+// LOGIN
+export async function login(data) {
+    const res = await api.post("/api/auth/login", data)
 
-        const response = await api.post("/api/auth/login", {
-            email, password
-        })
-
-        // Store token if returned
-        if (response.data.token) {
-            localStorage.setItem("token", response.data.token)
-        }
-
-        return response.data
-
-    } catch (err) {
-        throw err
+    if (res.data?.token) {
+        localStorage.setItem("token", res.data.token)
     }
 
+    return res.data
 }
 
+
+// LOGOUT
 export async function logout() {
-    try {
-
-        const response = await api.get("/api/auth/logout")
-
-        // Clear token on logout
-        localStorage.removeItem("token")
-
-        return response.data
-
-    } catch (err) {
-        throw err
-    }
+    localStorage.removeItem("token")
+    window.location.href = "/login"
 }
 
+
+// ✅ FIXED (IMPORTANT)
 export async function getMe() {
-
-    try {
-
-        const response = await api.get("/api/auth/get-me")
-
-        return response.data
-
-    } catch (err) {
-        throw err
-    }
-
+    const res = await api.get("/api/auth/get-me")
+    return res.data
 }
