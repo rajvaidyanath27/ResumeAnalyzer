@@ -4,7 +4,7 @@ const API = import.meta.env.VITE_API_URL
 
 const api = axios.create({
     baseURL: API,
-    timeout: 10000,
+    timeout: 60000, // 60s — Render free tier cold start takes 30-60s
 })
 
 // REQUEST INTERCEPTOR

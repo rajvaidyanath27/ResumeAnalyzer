@@ -5,6 +5,7 @@ const API = import.meta.env.VITE_API_URL
 const api = axios.create({
     baseURL: API,
     withCredentials: true,
+    timeout: 60000, // 60s — Render free tier cold start takes 30-60s
 })
 
 // Attach auth token to every request
