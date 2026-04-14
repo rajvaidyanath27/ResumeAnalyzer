@@ -68,42 +68,88 @@ export const useInterview = () => {
 
             if (response && response.html) {
                 // Open a new window with the resume HTML and trigger print (Save as PDF)
-                const printWindow = window.open('', '_blank', 'width=800,height=1100')
+                const printWindow = window.open('', '_blank', 'width=850,height=1100')
                 
                 const fullHtml = `<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ATS-Optimized Resume</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        @page { size: A4; margin: 0; }
         @media print {
-            body { margin: 0; padding: 15mm; }
-            .print-bar { display: none !important; }
+            html, body { margin: 0; padding: 0; }
+            .print-toolbar { display: none !important; }
+            .resume-page { box-shadow: none !important; margin: 0 !important; border-radius: 0 !important; padding: 42px 48px !important; }
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 1.5; color: #1a1a2e; padding: 20px; background: #fff; }
-        .print-bar { position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
-        .print-bar button { background: #e1034d; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 600; }
-        .print-bar button:hover { background: #c40242; }
-        .print-bar span { font-size: 13px; opacity: 0.8; }
-        .resume-content { margin-top: 60px; max-width: 800px; margin-left: auto; margin-right: auto; }
-        h1 { font-size: 22pt; margin-bottom: 4pt; color: #16213e; }
-        h2 { font-size: 13pt; margin-top: 14pt; margin-bottom: 6pt; color: #0f3460; border-bottom: 1.5px solid #0f3460; padding-bottom: 3pt; text-transform: uppercase; letter-spacing: 0.5pt; }
-        h3 { font-size: 11pt; margin-bottom: 2pt; }
-        p, li { font-size: 10pt; line-height: 1.6; }
-        ul { padding-left: 18pt; }
-        a { color: #0f3460; }
+        html { background: #e8e8ec; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #2d2d2d; -webkit-font-smoothing: antialiased; }
+
+        /* ── Print Toolbar ── */
+        .print-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+        .print-toolbar__left { display: flex; align-items: center; gap: 12px; }
+        .print-toolbar__icon { width: 36px; height: 36px; background: linear-gradient(135deg, #e1034d, #ff4081); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .print-toolbar__title { color: #fff; font-size: 15px; font-weight: 600; }
+        .print-toolbar__subtitle { color: #94a3b8; font-size: 12px; margin-top: 1px; }
+        .print-toolbar__actions { display: flex; gap: 10px; }
+        .print-toolbar__btn { padding: 10px 22px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .print-toolbar__btn--primary { background: linear-gradient(135deg, #e1034d, #ff4081); color: #fff; box-shadow: 0 2px 12px rgba(225,3,77,0.3); }
+        .print-toolbar__btn--primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(225,3,77,0.4); }
+        .print-toolbar__btn--secondary { background: rgba(255,255,255,0.1); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.15); }
+        .print-toolbar__btn--secondary:hover { background: rgba(255,255,255,0.15); }
+
+        /* ── Resume Page ── */
+        .resume-page { max-width: 794px; min-height: 1123px; margin: 80px auto 40px; background: #ffffff; padding: 48px 52px; box-shadow: 0 4px 40px rgba(0,0,0,0.12); border-radius: 2px; }
+
+        /* ── Resume Typography ── */
+        h1 { font-size: 26px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; margin-bottom: 4px; line-height: 1.2; }
+        h2 { font-size: 11.5px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 2px; margin-top: 22px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #0f172a; }
+        h3 { font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 1px; }
+        h4 { font-size: 11px; font-weight: 500; color: #64748b; margin-bottom: 4px; }
+        p { font-size: 10.5px; line-height: 1.65; color: #374151; margin-bottom: 4px; }
+        li { font-size: 10.5px; line-height: 1.65; color: #374151; margin-bottom: 3px; }
+        ul { padding-left: 16px; list-style-type: disc; }
+        ul li::marker { color: #94a3b8; }
+        a { color: #2563eb; text-decoration: none; }
+        strong { font-weight: 600; color: #1e293b; }
+        em { font-style: italic; color: #64748b; }
+        hr { border: none; border-top: 1px solid #e2e8f0; margin: 12px 0; }
+
+        /* ── Contact Info Row ── */
+        .contact-row { font-size: 10px; color: #64748b; margin-bottom: 16px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .contact-row a { color: #2563eb; font-weight: 500; }
+        .separator { color: #cbd5e1; margin: 0 2px; }
+
+        /* ── Section Spacing ── */
+        div + h2, section + h2 { margin-top: 20px; }
+        h2 + p, h2 + ul, h2 + div { margin-top: 2px; }
+        h3 + p { margin-top: 1px; }
+
+        /* ── Skills Tags ── */
+        .skills-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+        .skill-tag { background: #f1f5f9; color: #334155; font-size: 9.5px; padding: 3px 10px; border-radius: 3px; font-weight: 500; border: 1px solid #e2e8f0; }
     </style>
 </head>
 <body>
-    <div class="print-bar">
-        <div>
-            <strong>📄 ATS-Optimized Resume</strong>
-            <span> — Click "Save as PDF" to download</span>
+    <div class="print-toolbar">
+        <div class="print-toolbar__left">
+            <div class="print-toolbar__icon">📄</div>
+            <div>
+                <div class="print-toolbar__title">ATS-Optimized Resume</div>
+                <div class="print-toolbar__subtitle">Click "Save as PDF" → Select "Save as PDF" as destination</div>
+            </div>
         </div>
-        <button onclick="window.print()">⬇ Save as PDF</button>
+        <div class="print-toolbar__actions">
+            <button class="print-toolbar__btn print-toolbar__btn--secondary" onclick="window.close()">✕ Close</button>
+            <button class="print-toolbar__btn print-toolbar__btn--primary" onclick="window.print()">⬇ Save as PDF</button>
+        </div>
     </div>
-    <div class="resume-content">${response.html}</div>
+    <div class="resume-page">${response.html}</div>
 </body>
 </html>`
 
