@@ -1,3 +1,17 @@
+// Customer order deta hai (Request)
+//         ↓
+// Cashier (Controller)
+//   → Order leta hai
+//   → Kitchen ko bhejta hai
+//   → Customer ko deta hai
+//         ↓
+// Kitchen (Service)
+//   → Pizza actually banata hai
+//   → Complex kaam yahan hota hai
+
+//Implements all the works, kaise krna hai 
+
+
 const { GoogleGenAI } = require("@google/genai")
 const { z } = require("zod")
 const { zodToJsonSchema } = require("zod-to-json-schema")
