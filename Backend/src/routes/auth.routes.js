@@ -3,25 +3,25 @@ const authController = require("../controllers/auth.controller")
 const authMiddleware = require("../middlewares/auth.middleware")
 
 const authRouter = Router()
-
+     //public route
 /**
- * @route POST /api/auth/register
+ * @route
  * @description Register a new user
- * @access Public
+ * @access 
  */
 authRouter.post("/register", authController.registerUserController)
 
-
+      //public route     
 /**
- * @route POST /api/auth/login
+ * @route
  * @description login user with email and password
- * @access Public
+ * @access
  */
 authRouter.post("/login", authController.loginUserController)
 
-
+        
 /**
- * @route GET /api/auth/logout
+ * @route 
  * @description clear token from user cookie and add the token in blacklist
  * @access public
  */
@@ -29,7 +29,7 @@ authRouter.get("/logout", authController.logoutUserController)
 
 
 /**
- * @route GET /api/auth/get-me
+ * @route 
  * @description get the current logged in user details
  * @access private
  */
@@ -37,3 +37,7 @@ authRouter.get("/get-me", authMiddleware.authUser, authController.getMeControlle
 
 
 module.exports = authRouter
+
+//Logout public route kyu rakha hai ???
+
+//agar logout protected hota aur token already expired hota user logout bhi nahi kr pata , public rkhne se expired token wale user bhi properly logout ho skte hai 

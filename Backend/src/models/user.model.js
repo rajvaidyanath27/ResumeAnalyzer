@@ -1,3 +1,6 @@
+//Ye file MongoDB ke liye User ka blueprint/model bana rahi hai 
+// jisme username, email aur password fields defined hain.
+
 const mongoose = require("mongoose")
 
 

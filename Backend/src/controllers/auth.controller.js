@@ -1,12 +1,30 @@
+//ye file mera  authentication system hai , poora login/logout/register ka logic isi file mai hota hai
+
+//this file uses 4 libraries  -->
+
+//bcryptjs  - Password hash krna
+//jwt       - Token banana or verify krna 
+//userModel -  DB mai user dhundhana and create krne
+//tokenBlacklistModel   - Logout pe token blacklsit krna
+
+
 const userModel = require("../models/user.model")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const tokenBlacklistModel = require("../models/blacklist.model")
 
+//username, email, password lo req.body se
+// Koi field missing? → 400 error
+// Email/username pehle se hai? → 400 error
+// Password hash karo (bcrypt)
+// User DB mein save karo
+// token banao
+// Token cookie mein dalo
+// Response bhejo
 /**
  * @name registerUserController
- * @description register a new user, expects username, email and password in the request body
- * @access Public
+ * @description 
+ * @access 
  */
 async function registerUserController(req, res) {
     try {
@@ -46,7 +64,7 @@ async function registerUserController(req, res) {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 24 * 60 * 60 * 1000 // 1 day
+            maxAge: 24 * 60 * 60 * 1000 
         })
 
         res.status(201).json({
@@ -68,11 +86,17 @@ async function registerUserController(req, res) {
 
 }
 
-
+// email, password lo req.body se
+//  Email DB mein hai? → nahi toh 400 error
+//  Password match karo (bcrypt.compare)
+//  Match nahi? → 400 error
+//  JWT token banao
+//  Token cookie mein dalo
+//  Response bhejo
 /**
  * @name loginUserController
- * @description login a user, expects email and password in the request body
- * @access Public
+ * @description 
+ * @access 
  */
 async function loginUserController(req, res) {
     try {
@@ -104,7 +128,7 @@ async function loginUserController(req, res) {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 24 * 60 * 60 * 1000 // 1 day
+            maxAge: 24 * 60 * 60 * 1000 
         })
         
         res.status(200).json({
@@ -125,10 +149,14 @@ async function loginUserController(req, res) {
     }
 }
 
+// Cookie se token nikalo
+// Token blacklist DB mein save karo
+// Cookie clear karo
+// responsee bhejo
 
 /**
  * @name logoutUserController
- * @description clear token from user cookie and add the token in blacklist
+ * @description 
  * @access public
  */
 async function logoutUserController(req, res) {
@@ -153,9 +181,14 @@ async function logoutUserController(req, res) {
     }
 }
 
+
+// req.user.id lo (authMiddleware ne dala tha)
+// DB se user dhundho
+// User nahi mila? → 404 error
+// User ki details bhejo
 /**
  * @name getMeController
- * @description get the current logged in user details.
+ * @description 
  * @access private
  */
 async function getMeController(req, res) {

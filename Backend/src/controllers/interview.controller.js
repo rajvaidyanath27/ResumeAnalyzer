@@ -1,16 +1,16 @@
+//sirf interview ka kaam
+
+//jb interviewer "GENERATE MY STRATEGY"  saara kaam yahi se hot hai
+
+
 const pdfParse = require("pdf-parse")
 const { generateInterviewReport, generateResumePdf } = require("../services/ai.service")
 const interviewReportModel = require("../models/interviewReport.model")
 
-
-
-
-/**
- * @description Controller to generate interview report based on user self description, resume and job description.
- */
+//Report banao
 async function generateInterViewReportController(req, res) {
 
-    const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText()
+    const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText()//pdf file ko pdhke uska text nikalna
     const { selfDescription, jobDescription } = req.body
 
     const interViewReportByAi = await generateInterviewReport({
@@ -34,9 +34,7 @@ async function generateInterViewReportController(req, res) {
 
 }
 
-/**
- * @description Controller to get interview report by interviewId.
- */
+//Ek report lao
 async function getInterviewReportByIdController(req, res) {
 
     const { interviewId } = req.params
@@ -56,9 +54,7 @@ async function getInterviewReportByIdController(req, res) {
 }
 
 
-/** 
- * @description Controller to get all interview reports of logged in user.
- */
+//saari reports lao
 async function getAllInterviewReportsController(req, res) {
     const interviewReports = await interviewReportModel.find({ user: req.user.id }).sort({ createdAt: -1 }).select("-resume -selfDescription -jobDescription -__v -technicalQuestions -behavioralQuestions -skillGaps -preparationPlan")
 
@@ -69,9 +65,7 @@ async function getAllInterviewReportsController(req, res) {
 }
 
 
-/**
- * @description Controller to generate resume PDF based on user self description, resume and job description.
- */
+//Resume pdf banao
 async function generateResumePdfController(req, res) {
     try {
         const { interviewReportId } = req.params
@@ -107,3 +101,20 @@ async function generateResumePdfController(req, res) {
 }
 
 module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generateResumePdfController }
+
+// User clicks Generate
+//       ↓
+// generateInterViewReportController
+//   → PDF text nikalo (pdf-parse)
+//   → AI ko bhejo (ai.service.js)
+//   → Result DB mein save karo
+//   → Response bhejo
+//       ↓
+// Dashboard pe report dikhti hai
+// (getAllInterviewReports — sirf title, score, date)
+//       ↓
+// User report click karta hai
+// (getInterviewReportById — poora data)
+//       ↓
+// User PDF download karta hai
+// (generateResumePdf → HTML → frontend PDF banata hai) 

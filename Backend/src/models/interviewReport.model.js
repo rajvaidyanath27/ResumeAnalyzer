@@ -1,3 +1,6 @@
+//Interview report ka data database mai kaise store hoga
+
+//schema defines the structure of data and model uses this schema to perform operations
 const mongoose = require('mongoose');
 
 
@@ -35,6 +38,7 @@ const behavioralQuestionSchema = new mongoose.Schema({
     _id: false
 })
 
+//ai response mai kabhi kabhi unexpected values aaskti hai enum ensures only valid response aaskta hai
 const skillGapSchema = new mongoose.Schema({
     skill: {
         type: String,
@@ -65,7 +69,7 @@ const preparationPlanSchema = new mongoose.Schema({
 })
 
 const interviewReportSchema = new mongoose.Schema({
-    jobDescription: {
+    jobDescription: {  
         type: String,
         required: [ true, "Job description is required" ]
     },
@@ -75,7 +79,7 @@ const interviewReportSchema = new mongoose.Schema({
     selfDescription: {
         type: String,
     },
-    matchScore: {
+    matchScore: {  //ai ne agar 150  diya to mongodb reject krdega , this fixes score range
         type: Number,
         min: 0,
         max: 100,

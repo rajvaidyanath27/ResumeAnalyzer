@@ -5,34 +5,34 @@ const upload = require("../middlewares/file.middleware")
 
 const interviewRouter = express.Router()
 
-
+//contains 4 routes all of them are protected
 
 /**
- * @route POST /api/interview/
- * @description generate new interview report on the basis of user self description,resume pdf and job description.
- * @access private
+ * @route                //naya report generate kro
+ * @description 
+ * @access private 
  */
 interviewRouter.post("/", authMiddleware.authUser, upload.single("resume"), interviewController.generateInterViewReportController)
 
 /**
- * @route GET /api/interview/report/:interviewId
- * @description get interview report by interviewId.
+ * @route               //saare reports lao
+ * @description 
  * @access private
  */
 interviewRouter.get("/report/:interviewId", authMiddleware.authUser, interviewController.getInterviewReportByIdController)
 
-
+                    //ek specific report laao 
 /**
- * @route GET /api/interview/
- * @description get all interview reports of logged in user.
+ * @route 
+ * @description 
  * @access private
  */
 interviewRouter.get("/", authMiddleware.authUser, interviewController.getAllInterviewReportsController)
 
 
-/**
- * @route GET /api/interview/resume/pdf
- * @description generate resume pdf on the basis of user self description, resume content and job description.
+/**                  //resume pdf banao
+ * @route 
+ * @description 
  * @access private
  */
 interviewRouter.post("/resume/pdf/:interviewReportId", authMiddleware.authUser, interviewController.generateResumePdfController)
